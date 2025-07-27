@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+  <meta charset="UTF-8">
+  <title>Legal & Health AI Assistant</title>
+  <meta name="theme-color" content="#000000">
+  <link rel="stylesheet" href="/static/style.css">
+
+  <!-- Favicon links -->
+  <link rel="icon" href="/static/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+  <link rel="manifest" href="/static/site.webmanifest">
+  <meta name="msapplication-TileColor" content="#000000">
+  <meta name="msapplication-config" content="/static/browserconfig.xml">
+</head>
+
+<body>
+    <div class="container">
+        <h1>🧠 Legal & Health AI Assistant</h1>
+        <form id="ask-form">
+            <textarea name="prompt" placeholder="Ask your question..." required></textarea>
+            <button type="submit">Ask</button>
+        </form>
+        <div id="response-box">
+            <h3>AI Response:</h3>
+            <p id="response-text">Your answer will appear here.</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('ask-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const prompt = this.prompt.value;
+            const res = await fetch('/ask', {
+                method: 'POST',
+                body: new URLSearchParams({ prompt }),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            });
+            const data = await res.json();
+            document.getElementById('response-text').innerText = data.answer;
+        });
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/sw.js')
+                .then(reg => console.log('✅ Service Worker registered', reg))
+                .catch(err => console.error('❌ Service Worker registration failed', err));
+        }
+    </script>
+</body>
+</html>
